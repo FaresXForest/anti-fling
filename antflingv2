@@ -81,6 +81,7 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
+    
     if root.Massless then root.Massless = false end
     if root.CustomPhysicalProperties then root.CustomPhysicalProperties = nil end
 
