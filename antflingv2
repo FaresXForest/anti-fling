@@ -1,5 +1,12 @@
 local AntiFlingEnabled = true
 
+local function StopAntiFling()
+    AntiFlingEnabled = false
+end
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
 coroutine.wrap(function()
     while AntiFlingEnabled do
         local Players = game:GetService("Players")
@@ -74,7 +81,6 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
-    
     if root.Massless then root.Massless = false end
     if root.CustomPhysicalProperties then root.CustomPhysicalProperties = nil end
 
@@ -87,6 +93,8 @@ end)
     end
 end)()
 
-function StopAntiFling()
+LocalPlayer.CharacterAdded:Connect(function()
     AntiFlingEnabled = false
-end
+end)
+
+return StopAntiFling
