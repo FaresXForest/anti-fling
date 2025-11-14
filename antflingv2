@@ -1,9 +1,8 @@
 local AntiFlingEnabled = true
 
-while AntiFlingEnabled do
-    
-
-local Players = game:GetService("Players")
+coroutine.wrap(function()
+    while AntiFlingEnabled do
+        local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
@@ -84,9 +83,9 @@ RunService.Heartbeat:Connect(function()
     if humanoid.JumpPower ~= jp then humanoid.JumpPower = jp end
     if humanoid.HipHeight ~= hh then humanoid.HipHeight = hh end
 end)
-wait()
-         end
-
+        wait()
+    end
+end)()
 
 function StopAntiFling()
     AntiFlingEnabled = false
