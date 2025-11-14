@@ -1,0 +1,81 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local humanoid = character:WaitForChild("Humanoid")
+
+
+local DangerousTools = {
+    ["Splatter Slap"] = true,
+    ["Rainbowrath Sword"] = true,
+    ["Medusa's Head"] = true,
+    ["Bat"] = true
+}
+
+
+local function GetMyRagdollClient()
+    local char = player.Character or player.CharacterAdded:Wait()
+    return char:FindFirstChild("RagdollClient")
+end
+
+local MAX_FORCE = 50
+local MAX_ANGULAR = 40
+
+
+local ws = humanoid.WalkSpeed
+local jp = humanoid.JumpPower
+local hh = humanoid.HipHeight
+
+local isFrozen = false
+
+
+local function IsRagdollActive()
+    local rc = GetMyRagdollClient()
+    return rc and #rc:GetChildren() > 0
+end
+
+
+local function IsJumping()
+    local state = humanoid:GetState()
+    return state == Enum.HumanoidStateType.Jumping
+        or state == Enum.HumanoidStateType.Freefall
+end
+
+RunService.Heartbeat:Connect(function()
+    if not root or not humanoid then return end
+
+    local vel = root.AssemblyLinearVelocity
+    local ang = root.AssemblyAngularVelocity
+
+    
+    if vel.Magnitude > MAX_FORCE or ang.Magnitude > MAX_ANGULAR then
+        
+        if not IsJumping() then
+            isFrozen = true
+        end
+    end
+
+    
+    if isFrozen or IsRagdollActive() then
+        root.AssemblyLinearVelocity = Vector3.new(0,0,0)
+        root.AssemblyAngularVelocity = Vector3.new(0,0,0)
+        root.CFrame = root.CFrame -- Lock Position
+
+        
+        if vel.Magnitude < 2 and ang.Magnitude < 2 and not IsRagdollActive() then
+            isFrozen = false
+        end
+    end
+
+    
+    if root.Massless then root.Massless = false end
+    if root.CustomPhysicalProperties then root.CustomPhysicalProperties = nil end
+
+    
+    if humanoid.WalkSpeed ~= ws then humanoid.WalkSpeed = ws end
+    if humanoid.JumpPower ~= jp then humanoid.JumpPower = jp end
+    if humanoid.HipHeight ~= hh then humanoid.HipHeight = hh end
+end)
